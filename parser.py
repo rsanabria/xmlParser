@@ -1,44 +1,58 @@
 
 import xml.etree.ElementTree as ET
+import json, os
 
-from sys import argv
 
-script, filepath = argv
+array_data = []
 
-tree = ET.parse(filepath)
 
-root = tree.getroot()
+def parse_xml(file):
+    tree = ET.parse(file)
+    root = tree.getroot()
+    for author in root.iter('author'):
+        array_data.append(author.attrib)
+    for document in root.iter('document'):
+        array_data.append({"data":escape_data(document.text) })
 
-blogs = []
-
-def escaparBlog(blog):
-	blog_escapado = ""
-	salta = False
-	for letter in blog:
-		if(salta == False):
+def escape_data(data):
+    escaped_data = ""
+    jump = False
+    for letter in data:
+		if(jump == False):
 			if(letter == "<"):
-				salta = True
+				jump = True
 			else:
-				blog_escapado +=letter
+				escaped_data +=letter
 		else:
 			if(letter ==">"):
-				salta = False
+				jump = False
+    return escaped_data
 
-	return blog_escapado
-			
-for document in root.iter('document'):
-	print document.attrib
-	blogs.append(document.text)
-
-
-for indice in range(len(blogs)):
-	blogs[indice] = escaparBlog(blogs[indice])
-
-
-x=raw_input("Elige un blog: ")
-print blogs[int(x)]
+def append_files_to_read(path):
+    files_to_read = []
+    for root, dirs, files in os.walk(path):
+        if len(files) > 0:
+            for name in files:
+                files_to_read.append(os.path.join(root,name)) 
+    return files_to_read
 
 
+
+
+
+def write_json(name):
+    with open(name, "w") as json_file :
+        json.dump(array_data, json_file)
+        json_file.close()
+
+
+def parse(path) : 
+    files_to_read = append_files_to_read(path)
+    for file in files_to_read:
+        if file.find('.xml') >= 0:
+            parse_xml(file)
+    write_json(array_data[0]['type']+"_"+array_data[0]['lang']+".json")
+    
 			
 
 
