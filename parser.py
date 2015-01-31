@@ -55,6 +55,7 @@ def parse(path) :
     
 			
 
-
+def json_name():
+    return array_data[0]['type']+"_"+array_data[0]['lang']+".json"
 
 

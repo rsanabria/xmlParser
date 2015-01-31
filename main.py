@@ -1,5 +1,5 @@
 #!/usr/bin/python
-from parser import parse
+from parser import parse, json_name
 from sys import argv
 
 if len(argv) < 2:
@@ -9,3 +9,5 @@ script, path = argv
 
 
 parse(path)
+
+print json_name()
